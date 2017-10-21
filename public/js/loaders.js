@@ -3,6 +3,23 @@ import {createBackgroundLayer, createSpriteLayer} from './layers.js';
 import {loadBackgroundSprites} from './sprites.js';
 
 
+function createTiles(level, backgrounds) {
+
+    backgrounds.forEach(background => {
+
+        background.ranges.forEach(([x1, x2, y1, y2]) => {
+            for(let x=x1; x<x2; x++) {
+                for(let y=y1; y<y2; y++) {
+                    level.tiles.set(x, y, {
+                        name : background.tile,
+                    });
+                }
+            }
+        });
+
+    }); 
+}
+
 /**
  * load an image file and return as HTML Element
  * @param {string} url - image url 
@@ -34,7 +51,9 @@ export function loadLevel(name) {
     .then(([levelSpec, backgroundSprites ]) => {
         const level = new Level();
 
-        const backgroundLayer = createBackgroundLayer(levelSpec.backgrounds, backgroundSprites);
+        createTiles(level, levelSpec.backgrounds);
+
+        const backgroundLayer = createBackgroundLayer(level, backgroundSprites);
         level.comp.layers.push(backgroundLayer);
     
         const spriteLayer = createSpriteLayer(level.entities);
